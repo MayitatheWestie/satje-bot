@@ -16,59 +16,59 @@ const CAUSAS = JSON.parse(fs.readFileSync('./causas.json', 'utf8'));
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
   });
   const page = await context.newPage();
-  const resultados = [];
+      // Paso 2: Ubicar exactamente los inputs dentro del bloque "Número de proceso"
+      const bloqueNumero = page.locator('div, section, form').filter({ hasText: /^Número de proceso/i }).first();
+      const inputsEnBloque = bloqueNumero.locator('input:visible');
+      const cantidadInputs = await inputsEnBloque.count().catch(() => 0);
 
-  for (const numeroCausa of CAUSAS) {
-    const respuestasCapturadas = [];
-    const onResponse = async (res) => {
-      try {
-        const u = res.url();
-        if (res.status() === 200 && (u.includes('funcionjudicial.gob.ec') && (u.includes('EXPEL') || u.includes('causa') || u.includes('Causa') || u.includes('actuacion')))) {
-          const ct = res.headers()['content-type'] || '';
-          if (ct.includes('application/json')) {
-            const body = await res.json();
-            respuestasCapturadas.push({ url: u, body });
-          }
+      let valorEscrito = '';
+      if (cantidadInputs >= 3) {
+        // Caso A: El SATJE divide el número de proceso en 3 cajitas (Dependencia - Año - Secuencial)
+        const partes = numeroCausa.replace(/[^0-9]/g, '');
+        const p1 = numeroCausa.includes('-') ? numeroCausa.split('-')[0] : partes.slice(0, 5);
+        const p2 = numeroCausa.includes('-') ? numeroCausa.split('-')[1] : partes.slice(5, 9);
+        const p3 = numeroCausa.includes('-') ? numeroCausa.split('-')[2] : partes.slice(9);
+
+        await inputsEnBloque.nth(0).click();
+        await inputsEnBloque.nth(0).pressSequentially(p1, { delay: 45 });
+        await inputsEnBloque.nth(1).click();
+        await inputsEnBloque.nth(1).pressSequentially(p2, { delay: 45 });
+        await inputsEnBloque.nth(2).click();
+        await inputsEnBloque.nth(2).pressSequentially(p3, { delay: 45 });
+        await inputsEnBloque.nth(2).press('Tab');
+        valorEscrito = `${p1}-${p2}-${p3} (3 campos)`;
+      } else {
+        // Caso B: 1 solo campo de texto
+        let inputCausa = page.locator('mat-form-field:has-text("Número de proceso") input').first();
+        if (!(await inputCausa.isVisible({ timeout: 4000 }).catch(() => false))) {
+          inputCausa = page.getByLabel(/Número de proceso/i).last();
         }
-      } catch (_) {}
-    };
-
-    page.on('response', onResponse);
-
-    try {
-      await page.goto('https://procesosjudiciales.funcionjudicial.gob.ec/busqueda', {
-        waitUntil: 'networkidle',
-        timeout: 60000
-      });
-      await page.waitForTimeout(3000);
-
-      // Paso 1: Hacer clic en "Búsqueda avanzada" (Angular Material button / span / card)
-      const btnAvanzada = page.getByText(/Búsqueda avanzada/i).first();
-      await btnAvanzada.waitFor({ state: 'visible', timeout: 15000 });
-      await btnAvanzada.click({ force: true });
-      await page.waitForTimeout(3000);
-
-      // Paso 2: Ubicar exactamente el cuadro en blanco debajo de "Número de proceso"
-      let inputCausa = page.locator('mat-form-field:has-text("Número de proceso") input').first();
-      if (!(await inputCausa.isVisible({ timeout: 4000 }).catch(() => false))) {
-        inputCausa = page.getByLabel(/Número de proceso/i).last();
+        await inputCausa.waitFor({ state: 'visible', timeout: 20000 });
+        await inputCausa.click({ clickCount: 3 });
+        await inputCausa.press('Backspace');
+        await inputCausa.pressSequentially(numeroCausa, { delay: 55 });
+        await inputCausa.press('Tab');
+        valorEscrito = await inputCausa.inputValue().catch(() => '');
       }
-      if (!(await inputCausa.isVisible({ timeout: 4000 }).catch(() => false))) {
-        inputCausa = page.locator('input[formcontrolname*="proceso" i], input[formcontrolname*="numero" i], input[id*="mat-input"]').first();
-      }
-
-      await inputCausa.waitFor({ state: 'visible', timeout: 20000 });
-      await inputCausa.click({ clickCount: 3 });
-      await inputCausa.press('Backspace');
-      // Escribimos tecla por tecla para que Angular Material valide el formulario correctamente
-      await inputCausa.pressSequentially(numeroCausa, { delay: 55 });
-      await inputCausa.press('Tab');
       await page.waitForTimeout(1000);
-      const valorEscrito = await inputCausa.inputValue().catch(() => '');
 
       // Paso 3: Hacer clic en BUSCAR dentro del formulario avanzado
-      const btnBuscar = page.locator('button:has-text("BUSCAR"), button:has-text("Buscar")').last();
+      let btnBuscar = page.locator('button:has-text("BUSCAR"), button:has-text("Buscar")').last();
       await btnBuscar.click({ force: true });
+      await page.waitForTimeout(3000);
+
+      // Si el portal rechazó los guiones en campo único, reintentamos sin guiones (17230202404819)
+      const huboErrorForm = await page.getByText(/El formulario contiene errores/i).isVisible().catch(() => false);
+      if (huboErrorForm && cantidadInputs < 3) {
+        const soloDigitos = numeroCausa.replace(/[^0-9]/g, '');
+        const inputRetry = page.locator('mat-form-field:has-text("Número de proceso") input').first();
+        await inputRetry.click({ clickCount: 3 });
+        await inputRetry.press('Backspace');
+        await inputRetry.pressSequentially(soloDigitos, { delay: 55 });
+        await inputRetry.press('Tab');
+        valorEscrito = soloDigitos;
+        await btnBuscar.click({ force: true });
+      }
 
       // Esperamos 9 segundos a que responda el API del SATJE y renderice resultados
       await page.waitForTimeout(9000);
