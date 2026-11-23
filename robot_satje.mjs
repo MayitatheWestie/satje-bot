@@ -46,53 +46,67 @@ const CAUSAS = JSON.parse(fs.readFileSync('./causas.json', 'utf8'));
 
     try {
       await page.goto('https://procesosjudiciales.funcionjudicial.gob.ec/busqueda', {
-        waitUntil: 'domcontentloaded',
+        waitUntil: 'networkidle',
         timeout: 45000
       });
-      await page.waitForTimeout(3000);
+      await page.waitForTimeout(2000);
 
-      // Paso 1: Entrar a "Búsqueda avanzada"
+      // Paso 1: Clic en "Búsqueda avanzada"
       const btnAvanzada = page.getByText(/Búsqueda avanzada/i).first();
-      await btnAvanzada.waitFor({ state: 'visible', timeout: 20000 });
+      await btnAvanzada.waitFor({ state: 'visible', timeout: 15000 });
       await btnAvanzada.click({ force: true });
-      await page.waitForTimeout(2500);
+      await page.waitForTimeout(2000);
 
-      // Paso 2: Localizar directamente el campo oficial Angular formcontrolname="numeroCausa" y pegar el número completo
+      // Paso 2: Pegar el número de proceso en el campo oficial numeroCausa
       const inputProceso = page.locator('input[formcontrolname="numeroCausa"]').first();
       await inputProceso.waitFor({ state: 'visible', timeout: 15000 });
       await inputProceso.click();
-      await inputProceso.fill(numeroCausa);
-      await inputProceso.dispatchEvent('input');
-      await inputProceso.dispatchEvent('change');
-      await inputProceso.press('Tab');
+      await page.evaluate((texto) => {
+        const el = document.querySelector('input[formcontrolname="numeroCausa"]');
+        if (!el) return;
+        el.focus();
+        const dt = new DataTransfer();
+        dt.setData('text/plain', texto);
+        el.dispatchEvent(new ClipboardEvent('paste', { clipboardData: dt, bubbles: true, cancelable: true }));
+        el.value = texto;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+        el.dispatchEvent(new Event('blur', { bubbles: true }));
+      }, numeroCausa);
       const valorEscrito = await inputProceso.inputValue().catch(() => '');
-      await page.waitForTimeout(1200);
+      await page.waitForTimeout(1000);
 
-      // Paso 3: Hacer clic en BUSCAR dentro del formulario avanzado
-      const btnBuscar = page.locator('button[type="submit"], button:has-text("BUSCAR")').last();
+      // Inspeccionar qué controles Angular siguen marcados como inválidos (ej. recaptcha)
+      const camposInvalidos = await page.evaluate(() =>
+        Array.from(document.querySelectorAll('.ng-invalid[formcontrolname]')).map(el => ({
+          campo: el.getAttribute('formcontrolname'),
+          valor: el.value ?? ''
+        }))
+      );
+
+      // Paso 3: Clic en el botón BUSCAR visible del formulario
+      const btnBuscar = page.locator('button:visible:has-text("BUSCAR")').first();
       await btnBuscar.click({ force: true });
+      await page.waitForTimeout(8000);
 
-      // Esperamos 9 segundos a que responda el API del SATJE y renderice resultados
-      await page.waitForTimeout(9000);
-
-      // Si aparece una fila o botón para ver el detalle/movimientos del proceso, hacemos clic para abrir actuaciones
+      // Si hay resultados, abrir el detalle para extraer actuaciones
       const linkDetalle = page.locator('a[href*="movimientos"], button[aria-label*="movimiento" i], table tbody tr, mat-row, .causa-item').first();
       if (await linkDetalle.isVisible({ timeout: 3000 }).catch(() => false)) {
         await linkDetalle.click({ force: true }).catch(() => {});
         await page.waitForTimeout(5000);
       }
 
-      // Extraemos también el texto visible de la pantalla y posibles mensajes mat-error
-      const erroresCampo = await page.locator('mat-error').allInnerTexts().catch(() => []);
       const textoPantalla = await page.evaluate(() => document.body.innerText.slice(0, 5000));
-      const tituloPagina = await page.title();
+      const tieneIframeCaptcha = await page.locator('iframe[src*="recaptcha"], iframe[title*="reCAPTCHA" i]').count() > 0;
+      const requiereCaptcha = tieneIframeCaptcha || camposInvalidos.some(c => /captcha/i.test(c.campo || ''));
 
       resultados.push({
         numeroCausa,
         valorEscrito,
-        erroresCampo,
+        camposInvalidos,
+        requiereCaptcha,
         ok: respuestasCapturadas.length > 0 || (textoPantalla.includes(numeroCausa) && !textoPantalla.includes('El formulario contiene errores')),
-        tituloPagina,
+        tituloPagina: await page.title(),
         fechaRevision: new Date().toISOString(),
         data: respuestasCapturadas.length > 0 ? respuestasCapturadas : null,
         resumenPantalla: textoPantalla
