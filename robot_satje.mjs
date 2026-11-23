@@ -113,21 +113,20 @@ const CAUSAS = JSON.parse(fs.readFileSync('./causas.json', 'utf8'));
 
       // Paso 3: Hacer clic en BUSCAR dentro del formulario avanzado
       const btnBuscar = page.locator('button:has-text("BUSCAR"), button:has-text("Buscar")').last();
-      await btnBuscar.click({ force: true });
-      await page.waitForTimeout(3000);
+      // Paso 2: Localizar directamente el campo oficial Angular formcontrolname="numeroCausa" y pegar el número completo
+      const inputProceso = page.locator('input[formcontrolname="numeroCausa"]').first();
+      await inputProceso.waitFor({ state: 'visible', timeout: 15000 });
+      await inputProceso.click();
+      await inputProceso.fill(numeroCausa);
+      await inputProceso.dispatchEvent('input');
+      await inputProceso.dispatchEvent('change');
+      await inputProceso.press('Tab');
+      const valorEscrito = await inputProceso.inputValue().catch(() => '');
+      await page.waitForTimeout(1200);
 
-      // Si el portal rechazó los guiones en campo único, reintentamos sin guiones
-      const huboErrorForm = await page.getByText(/El formulario contiene errores/i).isVisible().catch(() => false);
-      if (huboErrorForm && inputsProceso.length === 1) {
-        const soloDigitos = numeroCausa.replace(/[^0-9]/g, '');
-        const targetRetry = todosLosInputs.nth(inputsProceso[0].idx);
-        await targetRetry.click({ clickCount: 3 });
-        await targetRetry.press('Backspace');
-        await targetRetry.pressSequentially(soloDigitos, { delay: 55 });
-        await targetRetry.press('Tab');
-        valorEscrito = soloDigitos;
-        await btnBuscar.click({ force: true });
-      }
+      // Paso 3: Hacer clic en BUSCAR dentro del formulario avanzado
+      const btnBuscar = page.locator('button[type="submit"], button:has-text("BUSCAR")').last();
+      await btnBuscar.click({ force: true });
 
       // Esperamos 9 segundos a que responda el API del SATJE y renderice resultados
       await page.waitForTimeout(9000);
@@ -139,14 +138,15 @@ const CAUSAS = JSON.parse(fs.readFileSync('./causas.json', 'utf8'));
         await page.waitForTimeout(5000);
       }
 
-      // Extraemos también el texto visible de la pantalla
+      // Extraemos también el texto visible de la pantalla y posibles mensajes mat-error
+      const erroresCampo = await page.locator('mat-error').allInnerTexts().catch(() => []);
       const textoPantalla = await page.evaluate(() => document.body.innerText.slice(0, 5000));
       const tituloPagina = await page.title();
 
       resultados.push({
         numeroCausa,
         valorEscrito,
-        camposDetectados: infoInputs.slice(0, 5),
+        erroresCampo,
         ok: respuestasCapturadas.length > 0 || (textoPantalla.includes(numeroCausa) && !textoPantalla.includes('El formulario contiene errores')),
         tituloPagina,
         fechaRevision: new Date().toISOString(),
