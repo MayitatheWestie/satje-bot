@@ -48,11 +48,6 @@ const CAUSAS = JSON.parse(fs.readFileSync('./causas.json', 'utf8'));
       await btnAvanzada.click({ force: true });
       await page.waitForTimeout(3000);
 
-      // Paso 2: Ubicar el campo "Número de proceso" dentro de Búsqueda Avanzada
-      let inputCausa = page.getByLabel(/Número de proceso/i).first();
-      if (!(await inputCausa.isVisible({ timeout: 5000 }).catch(() => false))) {
-        inputCausa = page.locator('input[placeholder*="proceso" i], input[formcontrolname*="numero" i], input[formcontrolname*="proceso" i], input[formcontrolname*="causa" i]').first();
-      }
       // Paso 2: Ubicar exactamente el cuadro en blanco debajo de "Número de proceso"
       let inputCausa = page.locator('mat-form-field:has-text("Número de proceso") input').first();
       if (!(await inputCausa.isVisible({ timeout: 4000 }).catch(() => false))) {
