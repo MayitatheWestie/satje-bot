@@ -53,28 +53,27 @@ const CAUSAS = JSON.parse(fs.readFileSync('./causas.json', 'utf8'));
       if (!(await inputCausa.isVisible({ timeout: 5000 }).catch(() => false))) {
         inputCausa = page.locator('input[placeholder*="proceso" i], input[formcontrolname*="numero" i], input[formcontrolname*="proceso" i], input[formcontrolname*="causa" i]').first();
       }
-      if (!(await inputCausa.isVisible({ timeout: 5000 }).catch(() => false))) {
-        // En Angular Material los inputs visibles del formulario avanzado suelen ser los últimos inputs de texto
-        const todosInputs = page.locator('input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"])');
-        const total = await todosInputs.count();
-        inputCausa = total > 1 ? todosInputs.nth(1) : todosInputs.first();
+      // Paso 2: Ubicar exactamente el cuadro en blanco debajo de "Número de proceso"
+      let inputCausa = page.locator('mat-form-field:has-text("Número de proceso") input').first();
+      if (!(await inputCausa.isVisible({ timeout: 4000 }).catch(() => false))) {
+        inputCausa = page.getByLabel(/Número de proceso/i).last();
+      }
+      if (!(await inputCausa.isVisible({ timeout: 4000 }).catch(() => false))) {
+        inputCausa = page.locator('input[formcontrolname*="proceso" i], input[formcontrolname*="numero" i], input[id*="mat-input"]').first();
       }
 
       await inputCausa.waitFor({ state: 'visible', timeout: 20000 });
-      await inputCausa.click();
-      await inputCausa.fill(numeroCausa);
-      await page.waitForTimeout(1200);
+      await inputCausa.click({ clickCount: 3 });
+      await inputCausa.press('Backspace');
+      // Escribimos tecla por tecla para que Angular Material valide el formulario correctamente
+      await inputCausa.pressSequentially(numeroCausa, { delay: 55 });
+      await inputCausa.press('Tab');
+      await page.waitForTimeout(1000);
+      const valorEscrito = await inputCausa.inputValue().catch(() => '');
 
-      // Paso 3: Hacer clic en Buscar dentro del formulario avanzado
-      const botonesBuscar = page.locator('button:has-text("Buscar")');
-      const countBuscar = await botonesBuscar.count();
-      if (countBuscar > 1) {
-        await botonesBuscar.last().click({ force: true });
-      } else if (countBuscar === 1) {
-        await botonesBuscar.first().click({ force: true });
-      } else {
-        await inputCausa.press('Enter');
-      }
+      // Paso 3: Hacer clic en BUSCAR dentro del formulario avanzado
+      const btnBuscar = page.locator('button:has-text("BUSCAR"), button:has-text("Buscar")').last();
+      await btnBuscar.click({ force: true });
 
       // Esperamos 9 segundos a que responda el API del SATJE y renderice resultados
       await page.waitForTimeout(9000);
@@ -92,7 +91,8 @@ const CAUSAS = JSON.parse(fs.readFileSync('./causas.json', 'utf8'));
 
       resultados.push({
         numeroCausa,
-        ok: respuestasCapturadas.length > 0 || textoPantalla.includes(numeroCausa),
+        valorEscrito,
+        ok: respuestasCapturadas.length > 0 || (textoPantalla.includes(numeroCausa) && !textoPantalla.includes('El formulario contiene errores')),
         tituloPagina,
         fechaRevision: new Date().toISOString(),
         data: respuestasCapturadas.length > 0 ? respuestasCapturadas : null,
