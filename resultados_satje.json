@@ -1,64 +1,13 @@
 {
-  "actualizado": "2026-11-23T04:09:02.445Z",
+  "actualizado": "2026-11-23T04:16:05.546Z",
   "resultados": [
     {
       "numeroCausa": "17230-2024-04819",
-      "valorEscrito": "17230202404819",
-      "camposDetectados": [
-        {
-          "idx": 0,
-          "y": 108,
-          "x": 366,
-          "maxLength": -1,
-          "placeholder": "Ingrese el códigoDependencia-Año-Secuencial",
-          "formControlName": "numeroCausa",
-          "ariaLabel": "Número de causa",
-          "labelText": "Número de proceso"
-        },
-        {
-          "idx": 1,
-          "y": 261,
-          "x": 366,
-          "maxLength": 15,
-          "placeholder": "Ingrese la identificación del Actor/Ofendido",
-          "formControlName": "cedulaActor",
-          "ariaLabel": "Cédula/RUC/Pasaporte del actor",
-          "labelText": "Cédula/RUC/Pasaporte"
-        },
-        {
-          "idx": 2,
-          "y": 261,
-          "x": 834,
-          "maxLength": 200,
-          "placeholder": "Ingrese los apellidos y nombres del Actor/Ofendido",
-          "formControlName": "nombreActor",
-          "ariaLabel": "\tApellido(s)/Nombre(s) del actor",
-          "labelText": "Apellido(s)/Nombre(s)"
-        },
-        {
-          "idx": 3,
-          "y": 414,
-          "x": 366,
-          "maxLength": 15,
-          "placeholder": "Ingrese la identificación del Demandado/Procesado",
-          "formControlName": "cedulaDemandado",
-          "ariaLabel": "Cédula/RUC/Pasaporte del demandado",
-          "labelText": "Cédula/RUC/Pasaporte"
-        },
-        {
-          "idx": 4,
-          "y": 414,
-          "x": 834,
-          "maxLength": 200,
-          "placeholder": "Ingrese los apellidos y nombres del Demandado/Procesado",
-          "formControlName": "nombreDemandado",
-          "ariaLabel": "\tApellido(s)/Nombre(s) del demandado",
-          "labelText": "Apellido(s)/Nombre(s)"
-        }
-      ],
+      "valorEscrito": "17230-2024-04819",
+      "erroresCampo": [],
       "ok": false,
       "tituloPagina": "Consulta de procesos",
-      "fechaRevision": "2026-11-23T04:09:02.444Z",
+      "fechaRevision": "2026-11-23T04:16:05.546Z",
       "data": null,
       "resumenPantalla": "Saltar al contenido principal\nSaltar a la navegación\nInicio\nhome\nBúsqueda avanzada\nsearch\nProcesos resueltos por juez\nsearch\nE-SATJE 2020 - CONSULTA DE PROCESOS JUDICIALES ELECTRÓNICOS\nBúsqueda avanzada\nNúmero de proceso\nActor / Ofendido\nCédula/RUC/Pasaporte\nApellido(s)/Nombre(s)\nDemandado / Procesado\nCédula/RUC/Pasaporte\nApellido(s)/Nombre(s)\nNoticia del delito\nFiltros adicionales\nBUSCAR\nEl formulario contiene errores. Revise los campos marcados.\nLIMPIAR\n\nNota: Antes de la vigencia del Código Orgánico Integral Penal, esto es el 10 de agosto de 2014, los procesos judiciales penales tenían un número diferente en cada instancia o recurso, pese a que correspondía al mismo expediente.\n\naccessibility_new\nAccesibilidad web\nAjustar vista y lectura para una mejor experiencia"
     }
