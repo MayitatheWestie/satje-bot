@@ -1,11 +1,13 @@
 {
-  "actualizado": "2026-11-23T01:09:49.491Z",
+  "actualizado": "2026-11-23T03:48:36.691Z",
   "resultados": [
     {
       "numeroCausa": "17230-2024-04819",
       "ok": false,
-      "error": "page.waitForResponse: Timeout 25000ms exceeded while waiting for event \"response\"",
-      "fechaRevision": "2026-11-23T01:09:49.491Z"
+      "tituloPagina": "Consulta de procesos",
+      "fechaRevision": "2026-11-23T03:48:36.690Z",
+      "data": null,
+      "resumenPantalla": "Saltar al contenido principal\nSaltar a la navegación\n\nE-SATJE 2020 - CONSULTA DE PROCESOS JUDICIALES ELECTRÓNICOS\n\nhelp\nIngrese letras y/o números, sin caracteres especiales, a excepción de punto y guión. Ejemplo: 1734567890 o JUAN PEREZ\nBuscar\nsearch\nBúsqueda avanzada\nsearch\nProcesos resueltos por juez\nsearch\n\nNota: Antes de la vigencia del Código Orgánico Integral Penal, esto es el 10 de agosto de 2014, los procesos judiciales penales tenían un número diferente en cada instancia o recurso, pese a que correspondía al mismo expediente.\n\naccessibility_new\nAccesibilidad web\nAjustar vista y lectura para una mejor experiencia"
     }
   ]
 }
