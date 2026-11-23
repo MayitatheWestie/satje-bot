@@ -1,0 +1,23 @@
+name: Vigilancia Diaria SATJE Ecuador
+on:
+  schedule:
+    - cron: '0 13 * * *' # Todos los días 08:00 AM hora Ecuador (13:00 UTC)
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  revisar-causas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install playwright && npx playwright install chromium
+      - run: node robot_satje.mjs
+      - run: |
+          git config user.name "Bot SATJE"
+          git config user.email "bot@satje.local"
+          git add resultados_satje.json
+          git commit -m "Actualización diaria SATJE" || exit 0
+          git push
