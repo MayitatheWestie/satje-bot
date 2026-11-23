@@ -1,13 +1,256 @@
 {
-  "actualizado": "2026-11-23T03:58:08.839Z",
+  "actualizado": "2026-11-23T04:03:16.975Z",
   "resultados": [
     {
       "numeroCausa": "17230-2024-04819",
-      "valorEscrito": "17230-2024-04819",
-      "ok": false,
+      "valorEscrito": "17230202404819",
+      "ok": true,
       "tituloPagina": "Consulta de procesos",
-      "fechaRevision": "2026-11-23T03:58:08.838Z",
-      "data": null,
+      "fechaRevision": "2026-11-23T04:03:16.974Z",
+      "data": [
+        {
+          "url": "https://api.funcionjudicial.gob.ec/EXPEL-UBICACION-SERVICE/api/ubicacion/provincia/getAll",
+          "status": 200,
+          "body": [
+            {
+              "idProvincia": "ECU01",
+              "nombreProvincia": "AZUAY",
+              "idPais": "ECU"
+            },
+            {
+              "idProvincia": "ECU02",
+              "nombreProvincia": "BOLIVAR",
+              "idPais": "ECU"
+            },
+            {
+              "idProvincia": "ECU03",
+              "nombreProvincia": "CAÑAR",
+              "idPais": "ECU"
+            },
+            {
+              "idProvincia": "ECU04",
+              "nombreProvincia": "CARCHI",
+              "idPais": "ECU"
+            },
+            {
+              "idProvincia": "ECU06",
+              "nombreProvincia": "CHIMBORAZO",
+              "idPais": "ECU"
+            },
+            {
+              "idProvincia": "ECU05",
+              "nombreProvincia": "COTOPAXI",
+              "idPais": "ECU"
+            },
+            {
+              "idProvincia": "ECU97",
+              "nombreProvincia": "DESCONOCE",
+              "idPais": "ECU"
+            },
+            {
+              "idProvincia": "ECU07",
+              "nombreProvincia": "EL ORO",
+              "idPais": "ECU"
+            },
+            {
+              "idProvincia": "ECU08",
+              "nombreProvincia": "ESMERALDAS",
+              "idPais": "ECU"
+            },
+            {
+              "idProvincia": "ECU20",
+              "nombreProvincia": "GALAPAGOS",
+              "idPais": "ECU"
+            },
+            {
+              "idProvincia": "ECU09",
+              "nombreProvincia": "GUAYAS",
+              "idPais": "ECU"
+            },
+            {
+              "idProvincia": "ECU10",
+              "nombreProvincia": "IMBABURA",
+              "idPais": "ECU"
+            },
+            {
+              "idProvincia": "ECU11",
+              "nombreProvincia": "LOJA",
+              "idPais": "ECU"
+            },
+            {
+              "idProvincia": "ECU12",
+              "nombreProvincia": "LOS RIOS",
+              "idPais": "ECU"
+            },
+            {
+              "idProvincia": "ECU13",
+              "nombreProvincia": "MANABI",
+              "idPais": "ECU"
+            },
+            {
+              "idProvincia": "ECU14",
+              "nombreProvincia": "MORONA SANTIAGO",
+              "idPais": "ECU"
+            },
+            {
+              "idProvincia": "ECU15",
+              "nombreProvincia": "NAPO",
+              "idPais": "ECU"
+            },
+            {
+              "idProvincia": "ECU98",
+              "nombreProvincia": "NO ENTREGA INFORMACION",
+              "idPais": "ECU"
+            },
+            {
+              "idProvincia": "ECU22",
+              "nombreProvincia": "ORELLANA",
+              "idPais": "ECU"
+            },
+            {
+              "idProvincia": "ECU16",
+              "nombreProvincia": "PASTAZA",
+              "idPais": "ECU"
+            },
+            {
+              "idProvincia": "ECU17",
+              "nombreProvincia": "PICHINCHA",
+              "idPais": "ECU"
+            },
+            {
+              "idProvincia": "ECU24",
+              "nombreProvincia": "SANTA ELENA",
+              "idPais": "ECU"
+            },
+            {
+              "idProvincia": "ECU23",
+              "nombreProvincia": "SANTO DOMINGO DE LOS TSACHILAS",
+              "idPais": "ECU"
+            },
+            {
+              "idProvincia": "ECU21",
+              "nombreProvincia": "SUCUMBIOS",
+              "idPais": "ECU"
+            },
+            {
+              "idProvincia": "ECU18",
+              "nombreProvincia": "TUNGURAHUA",
+              "idPais": "ECU"
+            },
+            {
+              "idProvincia": "ECU19",
+              "nombreProvincia": "ZAMORA CHINCHIPE",
+              "idPais": "ECU"
+            }
+          ]
+        },
+        {
+          "url": "https://api.funcionjudicial.gob.ec/EXPEL-CATALOGO-JURIDICO-SERVICE/api/catalogo/materia/getAll",
+          "status": 200,
+          "body": [
+            {
+              "idMateria": 26,
+              "nombreMateria": "ACCIÓN DISCIPLINARIA"
+            },
+            {
+              "idMateria": 19,
+              "nombreMateria": "ADMINISTRATIVO"
+            },
+            {
+              "idMateria": 31,
+              "nombreMateria": "ADOLESCENTE INFRACTOR COIP"
+            },
+            {
+              "idMateria": 32,
+              "nombreMateria": "CIVIL"
+            },
+            {
+              "idMateria": 2,
+              "nombreMateria": "CIVIL NO_COGEP"
+            },
+            {
+              "idMateria": 38,
+              "nombreMateria": "COACTIVAS-COA"
+            },
+            {
+              "idMateria": 9,
+              "nombreMateria": "CONSTITUCIONAL"
+            },
+            {
+              "idMateria": 37,
+              "nombreMateria": "CONTENCIOSO ADMINISTRATIVO"
+            },
+            {
+              "idMateria": 8,
+              "nombreMateria": "CONTENCIOSO ADMINISTRATIVO NO_COGEP"
+            },
+            {
+              "idMateria": 36,
+              "nombreMateria": "CONTENCIOSO TRIBUTARIO"
+            },
+            {
+              "idMateria": 12,
+              "nombreMateria": "CONTENCIOSO TRIBUTARIO NO_COGEP"
+            },
+            {
+              "idMateria": 10,
+              "nombreMateria": "CONTRAVENCIONES"
+            },
+            {
+              "idMateria": 29,
+              "nombreMateria": "CONTRAVENCIONES COIP"
+            },
+            {
+              "idMateria": 33,
+              "nombreMateria": "FAMILIA MUJER NIÑEZ Y ADOLESCENCIA"
+            },
+            {
+              "idMateria": 6,
+              "nombreMateria": "FAMILIA MUJER NIÑEZ Y ADOLESCENCIA NO_COGEP"
+            },
+            {
+              "idMateria": 22,
+              "nombreMateria": "GARANTÍAS PENITENCIARIAS"
+            },
+            {
+              "idMateria": 34,
+              "nombreMateria": "INQUILINATO"
+            },
+            {
+              "idMateria": 5,
+              "nombreMateria": "INQUILINATO NO_COGEP"
+            },
+            {
+              "idMateria": 1,
+              "nombreMateria": "PENAL"
+            },
+            {
+              "idMateria": 27,
+              "nombreMateria": "PENAL COIP"
+            },
+            {
+              "idMateria": 35,
+              "nombreMateria": "TRABAJO"
+            },
+            {
+              "idMateria": 4,
+              "nombreMateria": "TRABAJO NO_COGEP"
+            },
+            {
+              "idMateria": 3,
+              "nombreMateria": "TRANSITO"
+            },
+            {
+              "idMateria": 28,
+              "nombreMateria": "TRÁNSITO COIP"
+            },
+            {
+              "idMateria": 11,
+              "nombreMateria": "VIOLENCIA CONTRA LA MUJER Y FAMILIA"
+            }
+          ]
+        }
+      ],
       "resumenPantalla": "Saltar al contenido principal\nSaltar a la navegación\nInicio\nhome\nBúsqueda avanzada\nsearch\nProcesos resueltos por juez\nsearch\nE-SATJE 2020 - CONSULTA DE PROCESOS JUDICIALES ELECTRÓNICOS\nBúsqueda avanzada\nNúmero de proceso\nActor / Ofendido\nCédula/RUC/Pasaporte\nApellido(s)/Nombre(s)\nDemandado / Procesado\nCédula/RUC/Pasaporte\nApellido(s)/Nombre(s)\nNoticia del delito\nFiltros adicionales\nBUSCAR\nEl formulario contiene errores. Revise los campos marcados.\nLIMPIAR\n\nNota: Antes de la vigencia del Código Orgánico Integral Penal, esto es el 10 de agosto de 2014, los procesos judiciales penales tenían un número diferente en cada instancia o recurso, pese a que correspondía al mismo expediente.\n\naccessibility_new\nAccesibilidad web\nAjustar vista y lectura para una mejor experiencia"
     }
   ]
