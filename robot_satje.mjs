@@ -16,6 +16,45 @@ const CAUSAS = JSON.parse(fs.readFileSync('./causas.json', 'utf8'));
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
   });
   const page = await context.newPage();
+  const resultados = [];
+
+  for (const numeroCausa of CAUSAS) {
+    const respuestasCapturadas = [];
+    const onResponse = async (response) => {
+      const url = response.url();
+      if (
+        (url.includes('funcionjudicial.gob.ec') || url.includes('EXPEL-')) &&
+        !url.endsWith('.js') &&
+        !url.endsWith('.css')
+      ) {
+        try {
+          const text = await response.text();
+          if (text.trim().startsWith('{') || text.trim().startsWith('[')) {
+            respuestasCapturadas.push({
+              url,
+              status: response.status(),
+              body: JSON.parse(text)
+            });
+          }
+        } catch (_) {}
+      }
+    };
+
+    page.on('response', onResponse);
+
+    try {
+      await page.goto('https://procesosjudiciales.funcionjudicial.gob.ec/busqueda', {
+        waitUntil: 'domcontentloaded',
+        timeout: 45000
+      });
+      await page.waitForTimeout(3000);
+
+      // Paso 1: Entrar a "Búsqueda avanzada"
+      const btnAvanzada = page.getByText(/Búsqueda avanzada/i).first();
+      await btnAvanzada.waitFor({ state: 'visible', timeout: 20000 });
+      await btnAvanzada.click({ force: true });
+      await page.waitForTimeout(2000);
+
       // Paso 2: Ubicar exactamente los inputs dentro del bloque "Número de proceso"
       const bloqueNumero = page.locator('div, section, form').filter({ hasText: /^Número de proceso/i }).first();
       const inputsEnBloque = bloqueNumero.locator('input:visible');
